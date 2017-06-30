@@ -9,3 +9,6 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG = True
+
+class ProductionConfig(Config):
+    pass
