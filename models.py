@@ -1,4 +1,5 @@
 # Making use of sqlalchemy automap
+import os
 
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
@@ -7,7 +8,7 @@ from sqlalchemy import create_engine
 Base = automap_base()
 
 # engine, suppose it has two tables 'user' and 'address' set up
-engine = create_engine("postgresql://postgres@localhost:5432/cis")
+engine = create_engine(os.environ['DATABASE_URL'])
 
 # reflect the tables
 Base.prepare(engine, reflect=True)
@@ -21,6 +22,5 @@ ServiceType = Base.classes.service_type
 Service = Base.classes.service
 CustomerAddress = Base.classes.customer_address
 ServiceLocation = Base.classes.service_location
-
 
 session = Session(engine)

@@ -1,10 +1,14 @@
+import os
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
 
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres@localhost:5432/cis"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config.from_object(os.environ['APP_SETTINGS'])
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
