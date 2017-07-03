@@ -19,7 +19,7 @@ api = Api(app)
 resource_fields = {
     'name': fields.String,
     'description': fields.String,
-    'absolute_uri': fields.Url('org_unit', absolute=True),
+    'absolute_uri': fields.Url('org_units', absolute=True),
 }
 
 
@@ -41,6 +41,8 @@ def abort_if_not_exist(unit_id):
 
 # List of Organization Units
 class OrganizationUnitList(Resource):
+    print('inside organization unit list class')
+
     def __init__(self):
         self.reqparser = reqparse.RequestParser(bundle_errors=True)
         self.reqparser.add_argument('name', type=str, required=True,
@@ -66,7 +68,7 @@ class OrganizationUnitList(Resource):
         response.status_code = 200
         return response
 
-    @marshal_with(resource_fields)
+    @marshal_with(resource_fields, envelope='resource')
     def post(self):
         table = model.Organization_Unit
 
@@ -85,6 +87,22 @@ class OrganizationUnitList(Resource):
         model.session.commit()
 
         return new_unit
+
+
+# Organization Unit
+class OrganizationUnit(Resource):
+    print('inside organization unit class')
+
+    def get(self, unit_id):
+        org_unit = abort_if_not_exist(unit_id)
+
+        return org_unit
+
+    def put(self, unit_id):
+        pass
+
+    def delete(self, unit_id):
+        pass
 
 
 # Service Types
@@ -107,6 +125,7 @@ class ServiceTypesList(Resource):
 
 
 api.add_resource(OrganizationUnitList, '/org_units', endpoint='org_units')
+api.add_resource(OrganizationUnit, '/org_units/<int:unit_id>')
 api.add_resource(ServiceTypesList, '/stl')
 
 if __name__ == '__main__':
