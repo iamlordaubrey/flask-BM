@@ -1,13 +1,22 @@
 # Making use of sqlalchemy automap
 import os
 
-from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.automap import automap_base, generate_relationship
+
+
+def _gen_relationship(base, direction, return_fn, attrname, local_cls, referred_cls, **kw):
+    if direction is interfaces.ONETOMANY:
+        kw['cascade'] = 'all, delete-orphan'
+        kw['passive_deletes'] = True
+
+    return generate_relationship(base, direction, return_fn, attrname, local_cls, referred_cls, **kw)
+
+
+from sqlalchemy.orm import Session, interfaces
 from sqlalchemy import create_engine
 
 Base = automap_base()
 
-# engine, suppose it has two tables 'user' and 'address' set up
 engine = create_engine(os.environ['DATABASE_URL'])
 
 # reflect the tables
