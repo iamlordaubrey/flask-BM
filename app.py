@@ -23,17 +23,14 @@ resource_fields = {
 }
 
 
-def abort_if_not_exist(unit_id):
-    print('inside abort')
+def get_org_unit(unit_id):
     unit = model.session.query(model.Organization_Unit).filter_by(organization_business_id=unit_id).first()
-    print('org_unit inside abort', unit)
     if unit:
         obj = {
             'id': unit.organization_business_id,
             'name': unit.name,
             'description': unit.description
         }
-        print('obj is: ', obj)
         return obj
 
     abort(404, message="Unit ID {} doesn't exist".format(unit_id))
@@ -41,8 +38,6 @@ def abort_if_not_exist(unit_id):
 
 # List of Organization Units
 class OrganizationUnitList(Resource):
-    print('inside organization unit list class')
-
     def __init__(self):
         self.reqparser = reqparse.RequestParser(bundle_errors=True)
         self.reqparser.add_argument('name', type=str, required=True,
@@ -55,14 +50,15 @@ class OrganizationUnitList(Resource):
         org_units = model.session.query(model.Organization_Unit).all()
         result = []
 
-        for unit in org_units:
-            obj = {
-                'id': unit.organization_business_id,
-                'name': unit.name,
-                'description': unit.description
-            }
+        if org_units:
+            for unit in org_units:
+                obj = {
+                    'id': unit.organization_business_id,
+                    'name': unit.name,
+                    'description': unit.description
+                }
 
-            result.append(obj)
+                result.append(obj)
 
         response = jsonify(result)
         response.status_code = 200
@@ -86,23 +82,44 @@ class OrganizationUnitList(Resource):
         model.session.add(new_unit)
         model.session.commit()
 
-        return new_unit
+        return new_unit, 201
 
 
 # Organization Unit
 class OrganizationUnit(Resource):
-    print('inside organization unit class')
+    def __init__(self):
+        self.reqparser = reqparse.RequestParser(bundle_errors=True)
+        self.reqparser.add_argument('name', type=str, required=False,
+                                    help='Organization unit requires a name')
+        self.reqparser.add_argument('description', type=str, required=False,
+                                    help='Organization unit requires a description')
+        super(OrganizationUnit, self).__init__()
 
     def get(self, unit_id):
-        org_unit = abort_if_not_exist(unit_id)
+        org_unit = get_org_unit(unit_id)
 
-        return org_unit
+        return org_unit, 200
 
     def put(self, unit_id):
-        pass
+        table = model.Organization_Unit
+
+        args = self.reqparser.parse_args()
+        for k, v in args.items():
+            if v is not None:
+                model.session.query(table).filter(table.organization_business_id == unit_id).update({k: v})
+                model.session.commit()
+
+        return self.get(unit_id), 200
 
     def delete(self, unit_id):
-        pass
+        table = model.Organization_Unit
+
+        obj = model.session.query(table).filter(table.organization_business_id == unit_id)
+        if obj:
+            obj.delete()
+        model.session.commit()
+
+        return 204
 
 
 # Service Types
