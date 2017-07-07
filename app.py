@@ -1,4 +1,5 @@
 import os
+import shortuuid
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource, reqparse, fields, marshal_with, abort
@@ -68,13 +69,13 @@ class OrganizationUnitList(Resource):
     def post(self):
         table = model.Organization_Unit
 
-        sql_obj = model.session.query(table).order_by(table.organization_business_id.desc()).first()
-        next_id = sql_obj.organization_business_id + 1
+        # sql_obj = model.session.query(table).order_by(table.organization_business_id.desc()).first()
+        # next_id = sql_obj.organization_business_id + 1
 
         args = self.reqparser.parse_args()
 
         new_unit = model.Organization_Unit(
-            organization_business_id=next_id,
+            organization_business_id=shortuuid.uuid(),
             name=args['name'],
             description=args['description']
         )
