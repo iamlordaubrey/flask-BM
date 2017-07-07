@@ -55,6 +55,18 @@ psql -U <database user> <database name> < database_files/stripped_ddl/dbexport.p
 ```
 
 
+### Available Endpoints:
+| Endpoints       | Methods available |
+|-----------------|-------------------|
+| /org_units      | GET, POST         |
+| /org_units/<pk> | GET, PUT, DELETE  |
+| /stl            | GET, POST         |
+
+
 ##### Running the API:
-1. Run the server using `python app.py`
-2. Go to `localhost:5000/org_units` and hit the available endpoints to test
+1. Start the server using `python app.py`
+2. Go to `localhost:5000/<endpoint>`
+
+##### Running the API with gunicorn:
+1. Start the server using `gunicorn app:app` (Optional: -w `<number of threads>`)
+2. Go to `localhost:8000/<endpoint>`
