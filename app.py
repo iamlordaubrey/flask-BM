@@ -68,11 +68,6 @@ class OrganizationUnitList(Resource):
 
     @marshal_with(resource_fields)
     def post(self):
-        # table = model.Organization_Unit
-
-        # sql_obj = model.session.query(table).order_by(table.organization_business_id.desc()).first()
-        # next_id = sql_obj.organization_business_id + 1
-
         args = self.reqparser.parse_args()
 
         new_unit = model.Organization_Unit(
@@ -106,9 +101,11 @@ class OrganizationUnit(Resource):
         table = model.Organization_Unit
 
         args = self.reqparser.parse_args()
+        unit = model.session.query(table).filter(table.organization_business_id == unit_id)
+
         for k, v in args.items():
             if v is not None:
-                model.session.query(table).get(unit_id).update({k: v})
+                unit.update({k: v})
 
         model.session.commit()
 
