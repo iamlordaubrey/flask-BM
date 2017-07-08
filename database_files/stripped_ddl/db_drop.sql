@@ -1,1 +1,1 @@
-DROP DATABASE cis;
+DROP DATABASE cis_flask;

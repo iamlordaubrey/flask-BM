@@ -1,4 +1,5 @@
 import os
+import shortuuid
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource, reqparse, fields, marshal_with, abort
@@ -17,6 +18,7 @@ import models as model
 api = Api(app)
 
 resource_fields = {
+    'organization_business_id': fields.String,
     'name': fields.String,
     'description': fields.String,
     'absolute_uri': fields.Url('org_units', absolute=True),
@@ -64,17 +66,17 @@ class OrganizationUnitList(Resource):
         response.status_code = 200
         return response
 
-    @marshal_with(resource_fields, envelope='resource')
+    @marshal_with(resource_fields)
     def post(self):
         table = model.Organization_Unit
 
-        sql_obj = model.session.query(table).order_by(table.organization_business_id.desc()).first()
-        next_id = sql_obj.organization_business_id + 1
+        # sql_obj = model.session.query(table).order_by(table.organization_business_id.desc()).first()
+        # next_id = sql_obj.organization_business_id + 1
 
         args = self.reqparser.parse_args()
 
         new_unit = model.Organization_Unit(
-            organization_business_id=next_id,
+            organization_business_id=shortuuid.uuid(),
             name=args['name'],
             description=args['description']
         )
@@ -142,7 +144,7 @@ class ServiceTypesList(Resource):
 
 
 api.add_resource(OrganizationUnitList, '/org_units', endpoint='org_units')
-api.add_resource(OrganizationUnit, '/org_units/<int:unit_id>')
+api.add_resource(OrganizationUnit, '/org_units/<string:unit_id>')
 api.add_resource(ServiceTypesList, '/stl')
 
 if __name__ == '__main__':
