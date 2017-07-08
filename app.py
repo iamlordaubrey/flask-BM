@@ -26,7 +26,7 @@ resource_fields = {
 
 
 def get_org_unit(unit_id):
-    unit = model.session.query(model.Organization_Unit).filter_by(organization_business_id=unit_id).first()
+    unit = model.session.query(model.Organization_Unit).get(unit_id)
     if unit:
         obj = {
             'id': unit.organization_business_id,
@@ -68,7 +68,7 @@ class OrganizationUnitList(Resource):
 
     @marshal_with(resource_fields)
     def post(self):
-        table = model.Organization_Unit
+        # table = model.Organization_Unit
 
         # sql_obj = model.session.query(table).order_by(table.organization_business_id.desc()).first()
         # next_id = sql_obj.organization_business_id + 1
@@ -108,17 +108,19 @@ class OrganizationUnit(Resource):
         args = self.reqparser.parse_args()
         for k, v in args.items():
             if v is not None:
-                model.session.query(table).filter(table.organization_business_id == unit_id).update({k: v})
-                model.session.commit()
+                model.session.query(table).get(unit_id).update({k: v})
+
+        model.session.commit()
 
         return self.get(unit_id), 200
 
     def delete(self, unit_id):
         table = model.Organization_Unit
 
-        obj = model.session.query(table).filter(table.organization_business_id == unit_id)
+        obj = model.session.query(table).get(unit_id)
         if obj:
             obj.delete()
+
         model.session.commit()
 
         return 204

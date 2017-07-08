@@ -56,11 +56,11 @@ psql -U <database user> <database name> < database_files/stripped_ddl/dbexport.p
 
 
 ### Available Endpoints:
-| Endpoints       | Methods available |
-|-----------------|-------------------|
-| /org_units      | GET, POST         |
-| /org_units/<pk> | GET, PUT, DELETE  |
-| /stl            | GET, POST         |
+| Endpoints         | Methods available |
+|-------------------|-------------------|
+| /org_units        | GET, POST         |
+| /org_units/`<pk>` | GET, PUT, DELETE  |
+| /stl              | GET, POST         |
 
 
 ##### Running the API:
