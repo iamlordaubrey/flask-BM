@@ -114,7 +114,7 @@ class OrganizationUnit(Resource):
     def delete(self, unit_id):
         table = model.Organization_Unit
 
-        obj = model.session.query(table).get(unit_id)
+        obj = model.session.query(table).filter(table.organization_business_id == unit_id)
         if obj:
             obj.delete()
 
