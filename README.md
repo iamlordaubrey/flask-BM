@@ -6,13 +6,12 @@ This is a project created to test how many requests a Flask API can handle. This
 ### Local Setup
 *P.S.: Replace `<database user>` and `<database name>`, `<host>` and `<port>` with actual values.*
 
+Clone the repo
 
-Create a file named `.env` in the root of the project and add the following:
+`cd` into the folder and install dependencies:
+```bash
+pip install -r requirements.txt
 ```
-APP_SETTINGS="config.DevelopmentConfig"
-DATABASE_URL="postgresql://<database user>@<host>:<port>/<database name>"
-```
-The `.env` file has been gitignored.
 
 ### Database
 Run the following commands to:
@@ -32,7 +31,7 @@ psql -d <database name> -f database_files/stripped_ddl/create_tables.sql
 P.S.: After running the create tables script, connect to the database and grant all privileges to the database user:
 ```sql
 $ psql
-# \c cis
+# \c <database name>
 # GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO postgres;
 ```
 
@@ -55,6 +54,15 @@ psql -U <database user> <database name> < database_files/stripped_ddl/dbexport.p
 ```
 
 
+#### Connect to Database
+Create a file named `.env` in the root of the project and add the following:
+```
+APP_SETTINGS="config.DevelopmentConfig"
+DATABASE_URL="postgresql://<database user>@<host>:<port>/<database name>"
+```
+The `.env` file has been gitignored.
+
+
 ### Available Endpoints:
 | Endpoints         | Methods available |
 |-------------------|-------------------|
@@ -63,10 +71,10 @@ psql -U <database user> <database name> < database_files/stripped_ddl/dbexport.p
 | /stl              | GET, POST         |
 
 
-##### Running the API:
+### Running the API:
 1. Start the server using `python app.py`
 2. Go to `localhost:5000/<endpoint>`
 
-##### Running the API with gunicorn:
-1. Start the server using `gunicorn app:app` (Optional: -w `<number of threads>`)
+### Running the API with gunicorn:
+1. Start the gunicorn server using `gunicorn app:app -w 2` (Optional: -w `<number of workers>`)
 2. Go to `localhost:8000/<endpoint>`
